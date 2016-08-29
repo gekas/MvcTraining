@@ -1,3 +1,5 @@
 packages/
 MvcTraining/obj/
 MvcTraining/bin/
+MvcTraining.Tests/bin/
+MvcTraining.Tests/obj/
