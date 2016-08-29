@@ -1,0 +1,1 @@
+2016-08-29 14:00:20,038 [10] DEBUG RollingLogFileAppender [(null)] - ctor home controller

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,6 +9,11 @@ namespace MvcTraining.Controllers
 {
     public class HomeController : Controller
     {
+        public HomeController(ILog logger)
+        {
+            logger.Debug("ctor home controller");
+        }
+
         public ActionResult Index()
         {
             return View();
