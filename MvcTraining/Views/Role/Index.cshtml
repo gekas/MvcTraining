@@ -1,0 +1,38 @@
+﻿@using MvcTraining.Models.View
+@model List<RoleViewModel>
+@{
+    ViewBag.Title = "Application roles";
+}
+
+<div class="container body-content">
+    <h2>Create new role</h2>
+    <div class="form-group">
+        @using (Html.BeginForm("Create", "Role"))
+        {
+            @Html.Label("Role name: ")
+            @Html.TextBox("roleName");
+            <input type="submit" value="Create" />
+        }
+    </div>
+
+    <h2>Registered roles: </h2>
+    <div class="form-group">
+        <table border="1" cellpadding="10">
+            <tr>
+                <th>Role name</th>
+                <th></th>
+            </tr>
+            @foreach (var role in Model)
+            {
+                <tr>
+                    <td>
+                        @role.Name
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { roleId = role.Id }, null)
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>

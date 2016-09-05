@@ -1,8 +1,12 @@
 ﻿using log4net;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.Owin;
+using Microsoft.Owin.Security;
 using MvcTraining.Models;
 using SimpleInjector;
+using SimpleInjector.Advanced;
+using System.Collections.Generic;
 using System.Web;
 
 namespace MvcTraining.App_Start
@@ -11,8 +15,10 @@ namespace MvcTraining.App_Start
     {
         public static void RegisterDependencies(Container container)
         {
-            container.Register<IUserStore<ApplicationUser>>(() => new UserStore<ApplicationUser>(new ApplicationDbContext()));
-            container.RegisterPerWebRequest(() => HttpContext.Current.GetOwinContext().Authentication);
+            container.RegisterPerWebRequest(() =>
+                                                 AdvancedExtensions.IsVerifying(container)
+                                                 ? new OwinContext(new Dictionary<string, object>()).Authentication
+                                                 : HttpContext.Current.GetOwinContext().Authentication);
             container.RegisterSingleton<ILog>(LogManager.GetLogger("RollingLogFileAppender"));
         }
     }

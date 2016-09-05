@@ -1,0 +1,28 @@
+﻿@using MvcTraining.Models.View
+@model RoleViewModel
+@{
+    ViewBag.Title = "Edit role";
+}
+
+<div class="container body-content">
+    <h2>Edit role</h2>
+
+    @if (Model != null)
+    {
+        <div class="form-group">
+            @using (Html.BeginForm("Edit", "Role"))
+            {
+                @Html.Label("Role name: ")
+                @Html.HiddenFor(m => m.Id)
+                @Html.TextBoxFor(m => m.Name)
+                <input type="submit" value="Edit" />
+            }
+        </div>
+    }
+    else
+    {
+        <div class="form-group">
+            <p class="text-danger">Role with specified id doesn't exist</p>
+        </div>
+    }
+</div>

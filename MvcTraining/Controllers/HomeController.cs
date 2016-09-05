@@ -1,4 +1,7 @@
 ﻿using log4net;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using MvcTraining.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +14,13 @@ namespace MvcTraining.Controllers
     {
         public HomeController(ILog logger)
         {
-            logger.Debug("ctor home controller");
+            logger.Debug("ctor home controllers");
         }
 
         public ActionResult Index()
         {
+            ApplicationDbContext context = new ApplicationDbContext();
+            var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
             return View();
         }
 

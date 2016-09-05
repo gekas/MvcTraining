@@ -17,11 +17,13 @@ namespace MvcTraining.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private ApplicationDbContext _dbContext;
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
         {
             UserManager = userManager;
             SignInManager = signInManager;
+            _dbContext = new ApplicationDbContext();
         }
 
         public ApplicationSignInManager SignInManager
@@ -135,6 +137,7 @@ namespace MvcTraining.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
+            ViewBag.Roles = (SelectList)_dbContext.Roles;
             return View();
         }
 
@@ -152,7 +155,8 @@ namespace MvcTraining.Controllers
                 if (result.Succeeded)
                 {
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+                    await this.UserManager.AddToRoleAsync(user.Id, model.UserRole);
+
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);

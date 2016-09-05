@@ -65,6 +65,10 @@ namespace MvcTraining.Models
     public class RegisterViewModel
     {
         [Required]
+        [Display(Name = "UserRole")]
+        public string UserRole { get; set; }
+
+        [Required]
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }

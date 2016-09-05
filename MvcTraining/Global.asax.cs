@@ -1,4 +1,5 @@
 ﻿using MvcTraining.App_Start;
+using MvcTraining.Models;
 using SimpleInjector;
 using SimpleInjector.Integration.Web.Mvc;
 using System.Web.Mvc;
@@ -19,6 +20,7 @@ namespace MvcTraining
 
             var container = new Container();
             SimpleInjectorInitializer.RegisterDependencies(container);
+            container.Verify();
             DependencyResolver.SetResolver(new SimpleInjectorDependencyResolver(container));
         }
     }
