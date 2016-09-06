@@ -18,10 +18,14 @@
             {
                 <tr>
                     <td>
-                        @Model[i].User.UserName
+                        @Html.HiddenFor(m => m[i].UserId)
                     </td>
                     <td>
-                        @Html.ListBoxFor(m => m[i].Roles, Model[i].Roles, new { size = 3 })
+                        @Html.ValueFor(m => m[i].UserName)
+                    </td>
+                    <td>
+                        @Html.ListBoxFor(m => m[i].Roles, (MultiSelectList)ViewData["Roles"], new { size = 3 })
+                        
                     </td>
                 </tr>
                 }

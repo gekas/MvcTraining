@@ -66,7 +66,7 @@ namespace MvcTraining.Models
     {
         [Required]
         [Display(Name = "UserRole")]
-        public string UserRole { get; set; }
+        public string RoleId { get; set; }
 
         [Required]
         [EmailAddress]

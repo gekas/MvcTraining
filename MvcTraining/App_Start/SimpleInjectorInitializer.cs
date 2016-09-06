@@ -19,6 +19,7 @@ namespace MvcTraining.App_Start
                                                  AdvancedExtensions.IsVerifying(container)
                                                  ? new OwinContext(new Dictionary<string, object>()).Authentication
                                                  : HttpContext.Current.GetOwinContext().Authentication);
+            container.RegisterPerWebRequest<IUserStore<ApplicationUser>>(() => new UserStore<ApplicationUser>());
             container.RegisterSingleton<ILog>(LogManager.GetLogger("RollingLogFileAppender"));
         }
     }

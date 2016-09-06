@@ -9,7 +9,8 @@ namespace MvcTraining.Models.View
 {
     public class EditUserRoleViewModel
     {
-        public ApplicationUser User { get; set; }
-        public MultiSelectList Roles { get; set; }
+        public string UserId { get; set; }
+        public string UserName { get; set; }
+        public string[] Roles { get; set; }
     }
 }

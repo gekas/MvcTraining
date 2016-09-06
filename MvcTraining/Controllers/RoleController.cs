@@ -73,7 +73,7 @@ namespace MvcTraining.Controllers
 
             var users = _userManger.Users.ToList();
             List<EditUserRoleViewModel> viewModel = new List<EditUserRoleViewModel>();
-
+            ViewData["Roles"] = new MultiSelectList(_roleManager.Roles.ToList(), "Id", "Name");
             foreach (var user in users)
             {
                 var currentUserRoles = _roleManager.Roles
@@ -81,12 +81,12 @@ namespace MvcTraining.Controllers
                                                             user.Roles.Count(userRole => userRole.RoleId == r.Id) 
                                                             > 0)
                                                    .Select(r => r.Id).ToArray();
+
                 viewModel.Add(new EditUserRoleViewModel
                 {
-                    User = user,
-                    Roles = new MultiSelectList(_roleManager.Roles
-                                                            .Select(r => new RoleViewModel { Id = r.Id, Name = r.Name})
-                                                            .ToList(), "Id", "Name", currentUserRoles)
+                    UserId = user.Id,
+                    UserName = user.UserName,
+                    Roles = currentUserRoles
                 });
             }
 

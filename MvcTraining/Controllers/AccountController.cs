@@ -9,6 +9,8 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using MvcTraining.Models;
+using Microsoft.AspNet.Identity.EntityFramework;
+using System.Collections.Generic;
 
 namespace MvcTraining.Controllers
 {
@@ -137,7 +139,7 @@ namespace MvcTraining.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
-            ViewBag.Roles = (SelectList)_dbContext.Roles;
+            ViewBag.Roles = new SelectList(_dbContext.Roles.Where(r => r.Name != "Admin").ToList(), "Id", "Name");
             return View();
         }
 
@@ -151,11 +153,13 @@ namespace MvcTraining.Controllers
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    await this.UserManager.AddToRoleAsync(user.Id, model.UserRole);
+                    var roleName = _dbContext.Roles.Where(r => r.Id == model.RoleId).FirstOrDefault().Name;
+                    await this.UserManager.AddToRoleAsync(user.Id, roleName);
 
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
