@@ -20,7 +20,7 @@ namespace MvcTraining
 
             var container = new Container();
             SimpleInjectorInitializer.RegisterDependencies(container);
-            container.Verify();
+            // container.Verify();
             DependencyResolver.SetResolver(new SimpleInjectorDependencyResolver(container));
         }
     }

@@ -2,14 +2,13 @@
 using Microsoft.AspNet.Identity.EntityFramework;
 using MvcTraining.Models;
 using MvcTraining.Models.View;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace MvcTraining.Controllers
 {
+    [Authorize(Roles ="Admin")]
     public class RoleController : Controller
     {
         ApplicationDbContext _dbContext;
@@ -73,20 +72,23 @@ namespace MvcTraining.Controllers
 
             var users = _userManger.Users.ToList();
             List<EditUserRoleViewModel> viewModel = new List<EditUserRoleViewModel>();
-            ViewData["Roles"] = new MultiSelectList(_roleManager.Roles.ToList(), "Id", "Name");
+            ViewData["Roles"] = _roleManager.Roles.ToList();
             foreach (var user in users)
             {
-                var currentUserRoles = _roleManager.Roles
-                                                   .Where(r => 
-                                                            user.Roles.Count(userRole => userRole.RoleId == r.Id) 
-                                                            > 0)
-                                                   .Select(r => r.Id).ToArray();
+                var currentUserRoleNames = _userManger.GetRoles(user.Id)
+                                        .ToArray();
+
+                var currentUserRoleIds = _roleManager.Roles
+                                        .Where(r => r.Users.Where(u => u.UserId == user.Id).FirstOrDefault() != null)
+                                        .Select(r => r.Id)
+                                        .ToArray();
 
                 viewModel.Add(new EditUserRoleViewModel
                 {
                     UserId = user.Id,
                     UserName = user.UserName,
-                    Roles = currentUserRoles
+                    UserRolesNames = currentUserRoleNames,
+                    UserRolesIds = currentUserRoleIds
                 });
             }
 
@@ -94,14 +96,20 @@ namespace MvcTraining.Controllers
         }
 
         [HttpPost]
-        public string Users(List<EditUserRoleViewModel> users)
+        public ActionResult Users(List<EditUserRoleViewModel> usersRoles)
         {
-            if(users == null)
+            var allRolesName = _roleManager.Roles.Select(r => r.Name).ToList();
+
+            foreach(var userRolesInfo in usersRoles)
             {
-                return "Users is null";
+                foreach (var roleName in allRolesName)
+                    if (userRolesInfo.UserRolesNames.Contains(roleName))
+                        _userManger.AddToRole(userRolesInfo.UserId, roleName);
+                    else
+                        _userManger.RemoveFromRole(userRolesInfo.UserId, roleName);
             }
 
-            return "Something is there";
+            return RedirectToAction("Users"); 
         }
     }
 }

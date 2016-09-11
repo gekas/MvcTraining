@@ -1,0 +1,59 @@
+﻿@using System.Security.Claims
+@using Users.Infrastructure
+@model IList<Claim>
+@{ ViewBag.Title = "Claims"; }
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        Claims
+    </div>
+    @using (Html.BeginForm("Update", "Claims", FormMethod.Post))
+    {
+        <table class="table table-striped">
+            <tr>
+                <th>Subject</th>
+                <th>Issuer</th>
+                <th>Type</th>
+                <th>Value</th>
+                <th></th>
+            </tr>
+            @for (int i = 0; i < Model.Count(); i++)
+                {
+                <tr>
+                    <td> @Html.ValueFor(m => m[i].Subject.Name) </td>
+                    <td> @Html.ValueFor(m => m[i].Issuer) </td>
+                    <td> @Html.ClaimType(Model[i].Type) </td>
+                    <td>
+                        @if (Model[i].Issuer == ClaimsIdentity.DefaultIssuer)
+                        {
+                            @Html.TextBoxFor(m => m[i].Value, new { @readonly = "readonly" });
+                        }
+                        else
+                        { @Html.TextBoxFor(m => m[i].Value) }
+                    </td>
+                    <td>
+                        @if (Model[i].Issuer != ClaimsIdentity.DefaultIssuer)
+                    { <input type="button" class="btn btn-danger deleteClaimRow" value="Delete" /> }
+                </td>
+                @Html.HiddenFor(m => m[i].Type)
+                @Html.HiddenFor(m => m[i].Issuer)
+                @Html.HiddenFor(m => m[i].ValueType)
+            </tr>
+            }
+        </table>
+
+        <input type="submit" value="Update" />
+    }
+</div>
+
+@section MyScripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".deleteClaimRow").click(function () {
+                if (confirm("Are you sure you want to delete the claim?")) {
+                    $(this).closest("tr").remove();
+                }
+            });
+        });
+
+    </script>
+}

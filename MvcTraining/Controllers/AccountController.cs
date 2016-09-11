@@ -11,6 +11,7 @@ using Microsoft.Owin.Security;
 using MvcTraining.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Collections.Generic;
+using Users.Infrastructure;
 
 namespace MvcTraining.Controllers
 {
@@ -26,6 +27,7 @@ namespace MvcTraining.Controllers
             UserManager = userManager;
             SignInManager = signInManager;
             _dbContext = new ApplicationDbContext();
+            //UserManager = new ApplicationUserManager(new UserStore<ApplicationUser>(_dbContext));
         }
 
         public ApplicationSignInManager SignInManager
@@ -73,22 +75,15 @@ namespace MvcTraining.Controllers
                 return View(model);
             }
 
-            // This doesn't count login failures towards account lockout
-            // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
-            switch (result)
+            var user = await UserManager.FindAsync(model.Email, model.Password);
+            ClaimsIdentity ident = await UserManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
+            ident.AddClaims(LocationClaimsProvider.GetClaims(ident));
+            AuthenticationManager.SignOut();
+            AuthenticationManager.SignIn(new AuthenticationProperties
             {
-                case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
-                case SignInStatus.LockedOut:
-                    return View("Lockout");
-                case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-                case SignInStatus.Failure:
-                default:
-                    ModelState.AddModelError("", "Invalid login attempt.");
-                    return View(model);
-            }
+                IsPersistent = false
+            }, ident);
+            return RedirectToLocal(returnUrl);
         }
 
         //
